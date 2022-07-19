@@ -118,8 +118,8 @@ Initializing provider plugins...
 - Finding latest version of hashicorp/local...
 - Installing hashicorp/template v2.2.0...
 - Installed hashicorp/template v2.2.0 (signed by HashiCorp)
-- Installing oracle/oci v4.79.0...
-- Installed oracle/oci v4.79.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
+- Installing oracle/oci v4.84.0...
+- Installed oracle/oci v4.84.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
 - Installing hashicorp/random v3.3.1...
 - Installed hashicorp/random v3.3.1 (signed by HashiCorp)
 - Installing hashicorp/tls v3.4.0...
@@ -155,40 +155,34 @@ Run *terraform apply* to provision the content of this repo (type **yes** to con
 ```
 [opc@terraform-server terraform-oci-oke-pvc]$ terraform apply
 
+data.oci_identity_availability_domains.ADs: Reading...
+data.oci_core_services.FoggyKitchenAllOCIServices: Reading...
+data.oci_core_images.InstanceImageOCID: Reading...
+data.oci_containerengine_node_pool_option.FoggyKitchenOKEClusterNodePoolOption: Reading...
+data.oci_containerengine_cluster_option.FoggyKitchenOKEClusterOption: Reading...
+data.oci_identity_region_subscriptions.home_region_subscriptions: Reading...
+data.oci_identity_availability_domains.ADs: Read complete after 1s [id=IdentityAvailabilityDomainsDataSource-3269541301]
+data.oci_core_images.InstanceImageOCID: Read complete after 2s [id=CoreImagesDataSource-646959641]
+data.oci_identity_region_subscriptions.home_region_subscriptions: Read complete after 1s [id=IdentityRegionSubscriptionsDataSource-3269541301]
+data.oci_containerengine_cluster_option.FoggyKitchenOKEClusterOption: Read complete after 1s [id=ContainerengineClusterOptionDataSource-1870923232]
+data.oci_core_services.FoggyKitchenAllOCIServices: Read complete after 2s [id=CoreServicesDataSource-0]
+data.oci_containerengine_node_pool_option.FoggyKitchenOKEClusterNodePoolOption: Read complete after 2s [id=ContainerengineNodePoolOptionDataSource-1870923232]
+
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
   + create
  <= read (data resources)
 
 Terraform will perform the following actions:
 
-  # data.template_file.autoscaler_deployment will be read during apply
+  # data.template_file.pvc_deployment will be read during apply
   # (config refers to values not yet known)
- <= data "template_file" "autoscaler_deployment"  {
+ <= data "template_file" "pvc_deployment" {
       + id       = (known after apply)
       + rendered = (known after apply)
-      + template = <<-EOT
-            ---
-            apiVersion: v1
-            kind: ServiceAccount
-            metadata:
-              labels:
-                k8s-addon: cluster-autoscaler.addons.k8s.io
-                k8s-app: cluster-autoscaler
-              name: cluster-autoscaler
-              namespace: kube-system
-            ---
-            apiVersion: rbac.authorization.k8s.io/v1
-            kind: ClusterRole
-            metadata:
-              name: cluster-autoscaler
-              labels:
-                k8s-addon: cluster-autoscaler.addons.k8s.io
-                k8s-app: cluster-autoscaler
-            rules:
 
 (...)
 
-Plan: 27 to add, 0 to change, 0 to destroy.
+Plan: 22 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
   + cluster_instruction = (known after apply)
@@ -197,63 +191,29 @@ Do you want to perform these actions?
   Terraform will perform the actions described above.
   Only 'yes' will be accepted to approve.
 
-  Enter a value: yes
-
-
-random_id.tag: Creating...
-random_id.tag: Creation complete after 0s [id=54Y]
-tls_private_key.public_private_key_pair: Creating...
-tls_private_key.public_private_key_pair: Creation complete after 0s [id=6ad8987d7d0e47c7a06caf57798c706c8d2cbd41]
-oci_identity_tag_namespace.FoggyKitchenClusterTagNamespace: Creating...
-oci_identity_compartment.FoggyKitchenCompartment: Creating...
+  Enter a value:
 
 (...)
 
-nnull_resource.deploy_oke_autoscaler: Still creating... [1m40s elapsed]
-null_resource.deploy_oke_autoscaler: Still creating... [1m50s elapsed]
-null_resource.deploy_oke_autoscaler: Still creating... [2m0s elapsed]
-null_resource.deploy_oke_autoscaler: Provisioning with 'local-exec'...
-null_resource.deploy_oke_autoscaler (local-exec): Executing: ["/bin/sh" "-c" "kubectl -n kube-system get cm cluster-autoscaler-status -oyaml"]
-null_resource.deploy_oke_autoscaler (local-exec): apiVersion: v1
-null_resource.deploy_oke_autoscaler (local-exec): data:
-null_resource.deploy_oke_autoscaler (local-exec):   status: |+
-null_resource.deploy_oke_autoscaler (local-exec):     Cluster-autoscaler status at 2022-06-12 12:11:02.152766082 +0000 UTC:
-null_resource.deploy_oke_autoscaler (local-exec):     Cluster-wide:
-null_resource.deploy_oke_autoscaler (local-exec):       Health:      Healthy (ready=3 unready=0 notStarted=0 longNotStarted=0 registered=3 longUnregistered=0)
-null_resource.deploy_oke_autoscaler (local-exec):                    LastProbeTime:      2022-06-12 12:11:02.151651586 +0000 UTC m=+54.671652928
-null_resource.deploy_oke_autoscaler (local-exec):                    LastTransitionTime: 2022-06-12 12:10:22.083690777 +0000 UTC m=+14.603692120
-null_resource.deploy_oke_autoscaler (local-exec):       ScaleUp:     NoActivity (ready=3 registered=3)
-null_resource.deploy_oke_autoscaler (local-exec):                    LastProbeTime:      2022-06-12 12:11:02.151651586 +0000 UTC m=+54.671652928
-null_resource.deploy_oke_autoscaler (local-exec):                    LastTransitionTime: 2022-06-12 12:10:22.083690777 +0000 UTC m=+14.603692120
-null_resource.deploy_oke_autoscaler (local-exec):       ScaleDown:   NoCandidates (candidates=0)
-null_resource.deploy_oke_autoscaler (local-exec):                    LastProbeTime:      2022-06-12 12:11:02.151651586 +0000 UTC m=+54.671652928
-null_resource.deploy_oke_autoscaler (local-exec):                    LastTransitionTime: 2022-06-12 12:10:22.083690777 +0000 UTC m=+14.603692120
+null_resource.deploy_oke_pvc: Still creating... [10s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [20s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [30s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [40s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [50s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [1m0s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [1m10s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [1m20s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [1m30s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [1m40s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [1m50s elapsed]
+null_resource.deploy_oke_pvc: Still creating... [2m0s elapsed]
+null_resource.deploy_oke_pvc: Provisioning with 'local-exec'...
+null_resource.deploy_oke_pvc (local-exec): Executing: ["/bin/sh" "-c" "kubectl get pvc"]
+null_resource.deploy_oke_pvc (local-exec): NAME            STATUS   VOLUME                                                                                         CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+null_resource.deploy_oke_pvc (local-exec): fkblockvolume   Bound    ocid1.volume.oc1.eu-amsterdam-1.abqw2ljr3zvgfgvat3lvviqhowgv7mpuoiefj23xpp6uee2xlwi6q5q4zgtq   50Gi       RWO            oci            2m1s
+null_resource.deploy_oke_pvc: Creation complete after 2m6s [id=1427923604279513417]
 
-null_resource.deploy_oke_autoscaler (local-exec):     NodeGroups:
-null_resource.deploy_oke_autoscaler (local-exec):       Name:        ocid1.nodepool.oc1.eu-amsterdam-1.aaaaaaaakbtq47rxu4pj2vrx4nmvc6uqolp6opz6wdl5k3jzcns5dwicfiga
-null_resource.deploy_oke_autoscaler (local-exec):       Health:      Healthy (ready=3 unready=0 notStarted=0 longNotStarted=0 registered=3 longUnregistered=0 cloudProviderTarget=3 (minSize=3, maxSize=10))
-null_resource.deploy_oke_autoscaler (local-exec):                    LastProbeTime:      2022-06-12 12:11:02.151651586 +0000 UTC m=+54.671652928
-null_resource.deploy_oke_autoscaler (local-exec):                    LastTransitionTime: 2022-06-12 12:10:22.083690777 +0000 UTC m=+14.603692120
-null_resource.deploy_oke_autoscaler (local-exec):       ScaleUp:     NoActivity (ready=3 cloudProviderTarget=3)
-null_resource.deploy_oke_autoscaler (local-exec):                    LastProbeTime:      2022-06-12 12:11:02.151651586 +0000 UTC m=+54.671652928
-null_resource.deploy_oke_autoscaler (local-exec):                    LastTransitionTime: 2022-06-12 12:10:22.083690777 +0000 UTC m=+14.603692120
-null_resource.deploy_oke_autoscaler (local-exec):       ScaleDown:   NoCandidates (candidates=0)
-null_resource.deploy_oke_autoscaler (local-exec):                    LastProbeTime:      2022-06-12 12:11:02.151651586 +0000 UTC m=+54.671652928
-null_resource.deploy_oke_autoscaler (local-exec):                    LastTransitionTime: 2022-06-12 12:10:22.083690777 +0000 UTC m=+14.603692120
-
-null_resource.deploy_oke_autoscaler (local-exec): kind: ConfigMap
-null_resource.deploy_oke_autoscaler (local-exec): metadata:
-null_resource.deploy_oke_autoscaler (local-exec):   annotations:
-null_resource.deploy_oke_autoscaler (local-exec):     cluster-autoscaler.kubernetes.io/last-updated: 2022-06-12 12:11:02.152766082 +0000
-null_resource.deploy_oke_autoscaler (local-exec):       UTC
-null_resource.deploy_oke_autoscaler (local-exec):   creationTimestamp: "2022-06-12T12:10:08Z"
-null_resource.deploy_oke_autoscaler (local-exec):   name: cluster-autoscaler-status
-null_resource.deploy_oke_autoscaler (local-exec):   namespace: kube-system
-null_resource.deploy_oke_autoscaler (local-exec):   resourceVersion: "2431"
-null_resource.deploy_oke_autoscaler (local-exec):   uid: 767d03de-f9f0-4b12-bb3c-27f6da6d821c
-null_resource.deploy_oke_autoscaler: Creation complete after 2m8s [id=2147276689798789538]
-
-Apply complete! Resources: 27 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 22 added, 0 changed, 2 destroyed.
 
 Outputs:
 
@@ -262,11 +222,12 @@ cluster_instruction = <<EOT
 
 2.  Execute below command to setup OKE cluster access:
 
-$ oci ce cluster create-kubeconfig --region eu-amsterdam-1 --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaadbrxh4gvru4ocb65wckvlznvec5hw6xlrawofiv4fcjled73d3ta
+$ oci ce cluster create-kubeconfig --region eu-amsterdam-1 --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaaj3audjwux3v32kdq4e7zhbmkxrfbzo7k3rn2svjbmcqziwbrsgna
 
 3.  Obtain the PVC created by the automation
 
-$ kubectl get pvc  
+$ kubectl get pvc
+
 
 EOT
 ```
@@ -279,31 +240,20 @@ After testing the environment you can remove the OCI OKE infra. You should just 
 
 data.oci_containerengine_node_pool_option.FoggyKitchenOKEClusterNodePoolOption: Refreshing state...
 (…)
-
-oci_identity_dynamic_group.FoggyKitchenInstancePrincipalDynamicGroup: Destruction complete after 1m1s
+oci_core_security_list.FoggyKitchenOKELBSecurityList: Destroying... [id=ocid1.securitylist.oc1.eu-amsterdam-1.aaaaaaaawny2k4l52arnbk3u2o6pdjyj6u2nfx5q44gwn62bygc3qh3tybxa]
+oci_core_security_list.FoggyKitchenOKELBSecurityList: Destruction complete after 0s
+oci_core_subnet.FoggyKitchenOKEAPIEndpointSubnet: Destruction complete after 2s
+oci_core_route_table.FoggyKitchenVCNPublicRouteTable: Destroying... [id=ocid1.routetable.oc1.eu-amsterdam-1.aaaaaaaaq7zvvavm57uafb6auhprhjwbuhvv6bpargp4dnvrt442c3njeblq]
+oci_core_security_list.FoggyKitchenOKEAPIEndpointSecurityList: Destroying... [id=ocid1.securitylist.oc1.eu-amsterdam-1.aaaaaaaajdo7gcsbd2qxzskdpzf2eug77grajwigfqic7ef7ki33pt37fvaq]
+oci_core_security_list.FoggyKitchenOKEAPIEndpointSecurityList: Destruction complete after 0s
+oci_core_route_table.FoggyKitchenVCNPublicRouteTable: Destruction complete after 1s
+oci_core_internet_gateway.FoggyKitchenInternetGateway: Destroying... [id=ocid1.internetgateway.oc1.eu-amsterdam-1.aaaaaaaatcke5d36oagtyha5r34khcfpmyyhkbdwoclbnqxztx62do2yxneq]
+oci_core_internet_gateway.FoggyKitchenInternetGateway: Destruction complete after 0s
+oci_core_network_security_group.FoggyKitchenNSG: Destruction complete after 3s
+oci_core_virtual_network.FoggyKitchenVCN: Destroying... [id=ocid1.vcn.oc1.eu-amsterdam-1.amaaaaaanlc5nbyac4n4shpimhzml5zpzssk3qvdtr5msfdpygjpbc6sjq2a]
+oci_core_virtual_network.FoggyKitchenVCN: Destruction complete after 1s
 oci_identity_compartment.FoggyKitchenCompartment: Destroying... [id=ocid1.compartment.oc1..aaaaaaaayxvhhjidfxsq35muvshgxv62ac2mn6mi2yo2xqzsq53jgkuozfwq]
 oci_identity_compartment.FoggyKitchenCompartment: Destruction complete after 0s
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 3m30s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 3m40s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 3m50s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 4m0s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 4m10s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 4m20s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 4m30s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 4m40s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 4m50s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 5m0s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 5m10s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 5m20s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 5m30s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 5m40s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 5m50s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Still destroying... [id=ocid1.tagdefinition.oc1..aaaaaaaaatro67...5ram4ehv7pxkphgz3qgfp626q4dqfgahwiiuva, 6m0s elapsed]
-oci_identity_tag.FoggyKitchenClusterTag: Destruction complete after 6m0s
-oci_identity_tag_namespace.FoggyKitchenClusterTagNamespace: Destroying... [id=ocid1.tagnamespace.oc1..aaaaaaaawnk7pq4jjdgpf35s4nqzcuhbjvvcsv6aea5poh2nq3zlgmbeq57a]
-oci_identity_tag_namespace.FoggyKitchenClusterTagNamespace: Destruction complete after 1s
-random_id.tag: Destroying... [id=54Y]
-random_id.tag: Destruction complete after 0s
 
-Destroy complete! Resources: 27 destroyed.
+Destroy complete! Resources: 22 destroyed.
 ```

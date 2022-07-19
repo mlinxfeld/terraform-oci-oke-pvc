@@ -53,6 +53,6 @@ data "template_file" "pvc_deployment" {
       block_volume_name       = "${oci_core_volume.FoggyKitchenBlockVolume.display_name}"
       block_volume_id         = "${oci_core_volume.FoggyKitchenBlockVolume.id}"
       block_volume_size       = "${oci_core_volume.FoggyKitchenBlockVolume.size_in_gbs}"
-      availablity_domain_name = "${data.oci_identity_availability_domains.ADs.availability_domains[0].name}"
+      availablity_domain_name = var.availablity_domain_name == "" ? upper(split(":", data.oci_identity_availability_domains.ADs.availability_domains[0].name)[1]) : upper(split(":", var.availablity_domain_name)[1])
   }
 }
