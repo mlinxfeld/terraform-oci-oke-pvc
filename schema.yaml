@@ -119,7 +119,7 @@ variables:
     title: "Block Volume Name"
     description: "Choose the name for your Block Volume attached as PVC to OKE."
 
-  block_volume_name:
+  block_volume_size:
     type: number
     required: false
     minimum: 1
