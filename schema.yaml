@@ -1,0 +1,233 @@
+# Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+title: "Terraform OCI Container Engine for Kubernetes (aka OCI OKE) with OCI Block Volume as PVC"
+description: "FoggyKitchen.com - Terraform OCI Container Engine for Kubernetes (aka OCI OKE) with OCI Block Volume as PVC."
+stackDescription: "FoggyKitchen.com - Terraform OKE Container Engine for Kubernetes (aka OCI OKE) with OCI Block Volume as PVC."
+schemaVersion: 1.1.0
+version: "20201028"
+locale: "en"
+
+variableGroups:
+- title: "General Configuration"
+  visible: false
+  variables:
+  - tenancy_ocid
+  - region
+  - instance_os
+  - linux_os_version
+  - oci_service_gateway
+  - cluster_kube_config_token_version
+  - network_cidrs
+
+- title: "Required Configuration"
+  visible: true  
+  variables:
+  - compartment_ocid
+  - availablity_domain_name
+  - node_pool_size
+  - show_advanced 
+
+- title: "OKE Optional Configuration"
+  visible: 
+      and:
+        - show_advanced
+  variables:
+  - kubernetes_version
+  - ssh_public_key
+  - shape
+  - flex_shape_memory
+  - flex_shape_ocpus
+  - cluster_name
+
+- title: "Block Volume Configuration"
+  visible: 
+      and:
+        - show_advanced
+  variables:
+  - block_volume_name
+  - block_volume_size
+
+variables:
+
+  show_advanced:
+    type: boolean
+    title: "Show advanced options?"
+    description: "Shows advanced options."
+    visible: true
+    default: false
+
+  # General Configuration
+  tenancy_ocid:
+    title: "Tenancy ID"
+    description: "The Oracle Cloud Identifier (OCID) for your tenancy"
+    type: string
+    required: true
+    visibile: false
+
+  region:
+    title: "Region"
+    description: "Choose Region where you deploy your Webserver"
+    type: oci:identity:region:name
+    required: true
+    visibile: true
+
+  compartment_ocid:
+    title: "Compartment OCID"
+    description: "Choose Comparment where you deploy your Webserver"
+    type: oci:identity:compartment:id
+    required: true
+    visibile: true
+
+  availablity_domain_name:
+    type: oci:identity:availabilitydomain:name
+    required: true
+    visibile: true
+    title: "Availability Domain"
+    description: "Choose Availability Domain where OKE Nodes will be deployed."
+    dependsOn:
+      regionName: ${region}
+      compartmentId: ${compartment_ocid}
+
+  node_pool_size:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 3
+    title: "How many K8S Nodes?"
+    description: "Choose number of K8S Nodes to be deployed."
+
+  # Optional Configuration
+
+  kubernetes_version:
+    type: enum
+    title: "K8S Version"
+    description: "Choose Kubernetes (K8S) version for OKE"
+    default: "v1.23.4"
+    required: false
+    enum: 
+      - "v1.23.4"
+      - "v1.22.5"
+      - "v1.20.11"
+      - "v1.20.8"
+
+  block_volume_name:
+    type: string
+    required: false
+    title: "Block Volume Name"
+    description: "Choose the name for your Block Volume attached as PVC to OKE."
+
+  block_volume_name:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 256
+    multipleOf: 1
+    default: 50
+    title: "What is the size of block volume (GB)?"
+    description: "Choose number of GB for the size of the Block Volume attached as PVC to OKE."
+
+  shape:
+    type: oci:core:instanceshape:name
+    title: "K8S Nodes Shape"
+    description: "Choose a shape for your K8S nodes"
+    default: "VM.Standard.E4.Flex"
+    required: false
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+
+  flex_shape_ocpus:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 2
+    title: "K8S Nodes Flex Shape OCPUs"
+    description: "Choose number of OCPUs for Flex Shape."
+    visible:
+      and:
+        - or:
+          - eq:
+            - shape 
+            - "VM.Standard.E3.Flex"
+          - eq:
+            - shape 
+            - "VM.Standard.E4.Flex"
+          - eq:
+            - shape 
+            - "VM.Standard.A1.Flex"
+          - eq:
+            - shape 
+            - "VM.Optimized3.Flex"
+
+  flex_shape_memory:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 16
+    title: "K8S Nodes Flex Shape Memory (GB)"
+    description: "Choose number GB for Flex Shape Memory."
+    visible:
+      and:
+        - or:
+          - eq:
+            - shape 
+            - "VM.Standard.E3.Flex"
+          - eq:
+            - shape
+            - "VM.Standard.E4.Flex"
+          - eq:
+            - shape 
+            - "VM.Standard.A1.Flex"
+          - eq:
+            - shape 
+            - "VM.Optimized3.Flex"
+
+  ssh_public_key:
+    type: oci:core:ssh:publickey
+    title: "Public SSH Key"
+    description: "Choose public SSH Key to be uploaded into compute instances."
+    required: false
+
+  cluster_name:
+    type: string
+    title: "K8S Cluster Name"
+    description: "Choose K8S Cluster Name"
+    required: false
+
+  instance_os:
+    type: enum
+    required: false
+    visible: true
+    title: "Instance OS"
+    description: "Choose Operating System that determines the operating system for Webserver host."
+    default: "Oracle Linux"
+    enum:
+      - "Oracle Linux"
+
+  linux_os_version:
+    type: enum
+    required: false
+    visible: true
+    title: "Instance OS version"
+    description: "Choose Operating System version that determines the operating system version for Webserver host."
+    default: "7.9"
+    enum:
+      - "7.9"  
+
+outputs:
+
+  cluster_instruction:
+    title: "Post deployment instructions"
+    displayText: "Post deployment instructions."
+    type: string
+    visible: true
+  
+
+
+
