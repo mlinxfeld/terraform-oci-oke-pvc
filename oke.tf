@@ -1,6 +1,5 @@
 resource "oci_containerengine_cluster" "FoggyKitchenOKECluster" {
   provider           = oci.targetregion
-  depends_on         = [oci_identity_policy.FoggyKitchenOKEClusterAutoscalerPolicy1, oci_identity_policy.FoggyKitchenOKEClusterAutoscalerPolicy2]
   compartment_id     = oci_identity_compartment.FoggyKitchenCompartment.id
   kubernetes_version = var.kubernetes_version
   name               = var.cluster_name
@@ -30,7 +29,6 @@ resource "oci_containerengine_cluster" "FoggyKitchenOKECluster" {
 
 resource "oci_containerengine_node_pool" "FoggyKitchenOKENodePool" {
   provider           = oci.targetregion
-  depends_on         = [oci_identity_policy.FoggyKitchenOKEClusterAutoscalerPolicy1, oci_identity_policy.FoggyKitchenOKEClusterAutoscalerPolicy2]
   cluster_id         = oci_containerengine_cluster.FoggyKitchenOKECluster.id
   compartment_id     = oci_identity_compartment.FoggyKitchenCompartment.id
   kubernetes_version = var.kubernetes_version

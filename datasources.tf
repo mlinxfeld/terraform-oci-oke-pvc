@@ -50,8 +50,9 @@ data "template_file" "pvc_deployment" {
 
   template = "${file("${path.module}/templates/pvc.template.yaml")}"
   vars     = {
-      block_volume_name       = "${oci_core_volume.FoggyKitchenBlockVolume.name}"
+      block_volume_name       = "${oci_core_volume.FoggyKitchenBlockVolume.display_name}"
       block_volume_id         = "${oci_core_volume.FoggyKitchenBlockVolume.id}"
+      block_volume_size       = "${oci_core_volume.FoggyKitchenBlockVolume.size_in_gbs}"
       availablity_domain_name = "${data.oci_identity_availability_domains.ADs.availability_domains[0].name}"
   }
 }
