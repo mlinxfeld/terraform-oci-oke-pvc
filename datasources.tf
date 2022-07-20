@@ -56,3 +56,11 @@ data "template_file" "pvc_deployment" {
       availablity_domain_name = var.availablity_domain_name == "" ? upper(split(":", data.oci_identity_availability_domains.ADs.availability_domains[0].name)[1]) : upper(split(":", var.availablity_domain_name)[1])
   }
 }
+
+data "template_file" "nginx_deployment" {
+
+  template = "${file("${path.module}/templates/nginx.template.yaml")}"
+  vars     = {
+      block_volume_name = "${oci_core_volume.FoggyKitchenBlockVolume.display_name}"
+  }
+}

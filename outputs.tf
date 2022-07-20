@@ -10,5 +10,9 @@ $ oci ce cluster create-kubeconfig --region ${var.region} --cluster-id ${oci_con
 
 $ kubectl get pvc  
 
+4.  Obtain NGINX POD description with attached PVC
+
+$ kubectl describe pod nginx
+
 EOT
 }
