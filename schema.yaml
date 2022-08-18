@@ -11,7 +11,6 @@ variableGroups:
   variables:
   - tenancy_ocid
   - region
-  - instance_os
   - linux_os_version
   - oci_service_gateway
   - network_cidrs
@@ -31,9 +30,10 @@ variableGroups:
   variables:
   - kubernetes_version
   - ssh_public_key
-  - shape
+  - oke_node_shape
   - flex_shape_memory
   - flex_shape_ocpus
+  - oke_node_os_version
   - cluster_name
 
 - title: "Block Volume Configuration"
@@ -101,13 +101,12 @@ variables:
     type: enum
     title: "K8S Version"
     description: "Choose Kubernetes (K8S) version for OKE"
-    default: "v1.23.4"
+    default: "v1.24.1"
     required: false
     enum: 
+      - "v1.24.1"
       - "v1.23.4"
       - "v1.22.5"
-      - "v1.20.11"
-      - "v1.20.8"
 
   block_volume_name:
     type: string
@@ -125,7 +124,7 @@ variables:
     title: "What is the size of block volume (GB)?"
     description: "Choose number of GB for the size of the Block Volume attached as PVC to OKE."
 
-  shape:
+  oke_node_shape:
     type: oci:core:instanceshape:name
     title: "K8S Nodes Shape"
     description: "Choose a shape for your K8S nodes"
@@ -147,16 +146,16 @@ variables:
       and:
         - or:
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Standard.E3.Flex"
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Standard.E4.Flex"
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Standard.A1.Flex"
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Optimized3.Flex"
 
   flex_shape_memory:
@@ -172,16 +171,16 @@ variables:
       and:
         - or:
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Standard.E3.Flex"
           - eq:
-            - shape
+            - oke_node_shape
             - "VM.Standard.E4.Flex"
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Standard.A1.Flex"
           - eq:
-            - shape 
+            - oke_node_shape 
             - "VM.Optimized3.Flex"
 
   ssh_public_key:
@@ -196,25 +195,17 @@ variables:
     description: "Choose K8S Cluster Name"
     required: false
 
-  instance_os:
+  oke_node_os_version:
     type: enum
     required: false
     visible: true
-    title: "Instance OS"
-    description: "Choose Operating System that determines the operating system for Webserver host."
-    default: "Oracle Linux"
-    enum:
-      - "Oracle Linux"
-
-  linux_os_version:
-    type: enum
-    required: false
-    visible: true
-    title: "Instance OS version"
-    description: "Choose Operating System version that determines the operating system version for Webserver host."
-    default: "7.9"
+    title: "OKE Node OS version"
+    description: "Choose Operating System version that determines the operating system version for OKE Nodes."
+    default: "8.6"
     enum:
       - "7.9"  
+      - "8.5"
+      - "8.6"
 
 outputs:
 
