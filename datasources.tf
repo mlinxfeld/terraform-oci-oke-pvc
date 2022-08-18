@@ -8,10 +8,12 @@ data "oci_identity_region_subscriptions" "home_region_subscriptions" {
 }
 
 data "oci_containerengine_cluster_option" "FoggyKitchenOKEClusterOption" {
+  provider          = oci.targetregion
   cluster_option_id = "all"
 }
 
 data "oci_containerengine_node_pool_option" "FoggyKitchenOKEClusterNodePoolOption" {
+  provider            = oci.targetregion
   node_pool_option_id = "all"
 }
 
@@ -19,21 +21,6 @@ data "oci_containerengine_node_pool_option" "FoggyKitchenOKEClusterNodePoolOptio
 data "oci_identity_availability_domains" "ADs" {
   provider       = oci.targetregion
   compartment_id = var.tenancy_ocid
-}
-
-# Get the latest Oracle Linux image
-data "oci_core_images" "InstanceImageOCID" {
-  provider                 = oci.targetregion
-  compartment_id           = var.compartment_ocid
-  operating_system         = var.instance_os
-  operating_system_version = var.linux_os_version
-  shape                    = var.shape
-
-  filter {
-    name   = "display_name"
-    values = ["^.*Oracle[^G]*$"]
-    regex  = true
-  }
 }
 
 data "oci_core_services" "FoggyKitchenAllOCIServices" {

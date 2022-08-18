@@ -14,23 +14,21 @@ variable "ssh_public_key" {
 }
 
 variable "kubernetes_version" {
-  default = "v1.22.5"
+  default = "v1.24.1"
 }
 
 variable "node_pool_size" {
   default = 3
 }
 
-variable "instance_os" {
-  default = "Oracle Linux"
+variable "oke_node_shape" {
+  default = "VM.Standard.A1.Flex"
 }
 
-variable "linux_os_version" {
-  default = "7.9"
-}
-
-variable "shape" {
-  default = "VM.Standard.E4.Flex"
+variable "oke_node_os_version" {
+  default = "8.6"
+  #default = "8.5"
+  #default = "7.9"
 }
 
 variable "flex_shape_memory" {
@@ -85,4 +83,5 @@ variable "oci_service_gateway" {
     us-phoenix-1   = "all-phx-services-in-oracle-services-network"
   }
 }
+
 

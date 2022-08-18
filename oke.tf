@@ -33,10 +33,11 @@ resource "oci_containerengine_node_pool" "FoggyKitchenOKENodePool" {
   compartment_id     = oci_identity_compartment.FoggyKitchenCompartment.id
   kubernetes_version = var.kubernetes_version
   name               = "FoggyKitchenOKENodePool"
-  node_shape         = var.shape
+  node_shape         = var.oke_node_shape
 
   node_source_details {
-    image_id    = data.oci_core_images.InstanceImageOCID.images[0].id
+    image_id    = local.oracle_linux_images[0]
+    #data.oci_core_images.InstanceImageOCID.images[0].id
     source_type = "IMAGE"
   }
 
