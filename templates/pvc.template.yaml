@@ -5,9 +5,7 @@ metadata:
   annotations:
     volume.beta.kubernetes.io/oci-volume-source: ${block_volume_id}
 spec:
-  selector:
-    matchLabels:
-      failure-domain.beta.kubernetes.io/zone: ${availablity_domain_name}
+  storageClassName: "oci-custom-storageclass"
   accessModes:
     - ReadWriteOnce
   resources:

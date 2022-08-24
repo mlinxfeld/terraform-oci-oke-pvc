@@ -43,6 +43,7 @@ variableGroups:
   variables:
   - block_volume_name
   - block_volume_size
+  - fs_type
 
 variables:
 
@@ -123,6 +124,17 @@ variables:
     default: 50
     title: "What is the size of block volume (GB)?"
     description: "Choose number of GB for the size of the Block Volume attached as PVC to OKE."
+
+  fs_type:
+    type: enum
+    title: "FileSystem Type"
+    description: "Choose FileSystem Type"
+    default: "ext4"
+    required: false
+    enum: 
+      - "ext4"
+      - "ext3"
+      - "xfs"
 
   oke_node_shape:
     type: oci:core:instanceshape:name
