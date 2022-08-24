@@ -15,6 +15,7 @@ variable "ssh_public_key" {
 
 variable "kubernetes_version" {
   default = "v1.24.1"
+#  default = "v1.23.4"
 }
 
 variable "node_pool_size" {
@@ -49,6 +50,12 @@ variable "block_volume_name" {
 
 variable "block_volume_size" {
   default = 50
+}
+
+variable "fs_type" {
+  default = "ext4"
+#  default = "ext3"  
+#  default = "xfs"
 }
 
 variable "network_cidrs" {
