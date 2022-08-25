@@ -38,7 +38,7 @@ resource "null_resource" "deploy_oke_pvc" {
   }
 
   provisioner "local-exec" {
-    command = "sleep 120"
+    command = "sleep 60"
   }
 
   provisioner "local-exec" {

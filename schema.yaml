@@ -41,9 +41,11 @@ variableGroups:
       and:
         - show_advanced
   variables:
+  - pvc_from_existing_block_volume
   - block_volume_name
   - block_volume_size
   - fs_type
+  - vpus_per_gb
 
 variables:
 
@@ -109,6 +111,13 @@ variables:
       - "v1.23.4"
       - "v1.22.5"
 
+  pvc_from_existing_block_volume:
+    type: boolean
+    title: "PVC from existing block volume?"
+    description: "Existing (true) means created by Terraform, in opposite (false) it will be create from with K8S."
+    visible: true
+    default: true
+
   block_volume_name:
     type: string
     required: false
@@ -128,13 +137,25 @@ variables:
   fs_type:
     type: enum
     title: "FileSystem Type"
-    description: "Choose FileSystem Type"
+    description: "Choose FileSystem Type for PVC backed by a block volume."
     default: "ext4"
     required: false
     enum: 
       - "ext4"
       - "ext3"
       - "xfs"
+
+  vpus_per_gb:
+    type: enum
+    required: false
+    visible: true
+    title: "VPUs per GB"
+    description: "Choose performance level for PVC backed by a block volume - Lower Cost (0), Balanced (10), or Higher Performance (20)."
+    default: "0"
+    enum:
+      - "0"  
+      - "10"
+      - "20"
 
   oke_node_shape:
     type: oci:core:instanceshape:name
