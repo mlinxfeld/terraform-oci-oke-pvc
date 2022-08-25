@@ -37,7 +37,8 @@ data "template_file" "storageclass_deployment" {
 
   template = "${file("${path.module}/templates/storageclass.template.yaml")}"
   vars     = {
-      fs_type = var.fs_type
+      fs_type     = var.fs_type
+      vpus_per_gb = var.vpus_per_gb
   }
 }
 
@@ -45,9 +46,10 @@ data "template_file" "pvc_deployment" {
 
   template = "${file("${path.module}/templates/pvc.template.yaml")}"
   vars     = {
-      block_volume_name       = "${oci_core_volume.FoggyKitchenBlockVolume.display_name}"
-      block_volume_id         = "${oci_core_volume.FoggyKitchenBlockVolume.id}"
-      block_volume_size       = "${oci_core_volume.FoggyKitchenBlockVolume.size_in_gbs}"
+      pvc_from_existing_block_volume = var.pvc_from_existing_block_volume
+      block_volume_name              = var.pvc_from_existing_block_volume ? oci_core_volume.FoggyKitchenBlockVolume[0].display_name : var.block_volume_name
+      block_volume_id                = var.pvc_from_existing_block_volume ? oci_core_volume.FoggyKitchenBlockVolume[0].id : ""
+      block_volume_size              = var.pvc_from_existing_block_volume ? oci_core_volume.FoggyKitchenBlockVolume[0].size_in_gbs : var.block_volume_size
   }
 }
 
@@ -55,6 +57,6 @@ data "template_file" "nginx_deployment" {
 
   template = "${file("${path.module}/templates/nginx.template.yaml")}"
   vars     = {
-      block_volume_name = "${oci_core_volume.FoggyKitchenBlockVolume.display_name}"
+      block_volume_name = var.pvc_from_existing_block_volume ? oci_core_volume.FoggyKitchenBlockVolume[0].display_name : var.block_volume_name
   }
 }

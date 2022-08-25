@@ -5,6 +5,7 @@ metadata:
 provisioner: blockvolume.csi.oraclecloud.com
 parameters:
   csi.storage.k8s.io/fstype: ${fs_type}
+  vpusPerGB: "${vpus_per_gb}"
 reclaimPolicy: Retain
 allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
