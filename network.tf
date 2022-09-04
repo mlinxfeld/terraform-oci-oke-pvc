@@ -200,11 +200,87 @@ resource "oci_core_security_list" "FoggyKitchenOKENodesSecurityList" {
 }
 
 resource "oci_core_security_list" "FoggyKitchenOKELBSecurityList" {
+  count          = var.lb_nsg ? 0 : 1
   provider       = oci.targetregion
   compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
   display_name   = "FoggyKitchenOKELBSecurityList"
   vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+
+  # Ingress
+
+  ingress_security_rules {
+    description = "External access to Load Balancer in K8S"
+    source      = lookup(var.network_cidrs, "ALL-CIDR")
+    source_type = "CIDR_BLOCK"
+    protocol    = local.tcp_protocol_number
+    stateless   = false
+
+    tcp_options {
+      max = local.lb_listener_port
+      min = local.lb_listener_port
+    }
+  }
+
+  # Egress
+
+  egress_security_rules {
+    description      = "Allow traffic to Kubernetes Worker Nodes"
+    destination      = lookup(var.network_cidrs, "SUBNET-REGIONAL-CIDR")
+    destination_type = "CIDR_BLOCK"
+    protocol         = local.tcp_protocol_number
+    stateless        = false
+
+    tcp_options {
+      max = local.oke_nodes_max_port
+      min = local.oke_nodes_min_port
+    }
+  }
+
 }
+
+# OKE LB NSG
+resource "oci_core_network_security_group" "FoggyKitchenOKELBSecurityGroup" {
+  count          = var.lb_nsg ? 1 : 0
+  provider       = oci.targetregion
+  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
+  display_name   = "FoggyKitchenLBSecurityGroup"
+  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+}
+
+# OKE LB NSG Egress Rules
+resource "oci_core_network_security_group_security_rule" "FoggyKitchenOKELBSecurityEgressGroupRule" {
+  count                     = var.lb_nsg ? 1 : 0
+  provider                  = oci.targetregion
+  network_security_group_id = oci_core_network_security_group.FoggyKitchenOKELBSecurityGroup[0].id
+  direction                 = "EGRESS"
+  protocol                  = local.tcp_protocol_number
+  destination               = lookup(var.network_cidrs, "SUBNET-REGIONAL-CIDR")
+  destination_type          = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      max = local.oke_nodes_max_port
+      min = local.oke_nodes_min_port
+    }
+  }
+}
+
+# OKE LB NSG Ingress Rules
+resource "oci_core_network_security_group_security_rule" "FoggyKitchenOKELBSecurityIngressGroupRules" {
+  count                     = var.lb_nsg ? 1 : 0
+  provider                  = oci.targetregion
+  network_security_group_id = oci_core_network_security_group.FoggyKitchenOKELBSecurityGroup[0].id
+  direction                 = "INGRESS"
+  protocol                  = local.tcp_protocol_number
+  source                    = lookup(var.network_cidrs, "ALL-CIDR")
+  source_type               = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      max = local.lb_listener_port
+      min = local.lb_listener_port
+    }
+  }
+}
+
 
 resource "oci_core_security_list" "FoggyKitchenOKEAPIEndpointSecurityList" {
   provider       = oci.targetregion
@@ -380,7 +456,7 @@ resource "oci_core_subnet" "FoggyKitchenOKELBSubnet" {
   prohibit_public_ip_on_vnic = false
   route_table_id             = oci_core_route_table.FoggyKitchenVCNPublicRouteTable.id
   dhcp_options_id            = oci_core_virtual_network.FoggyKitchenVCN.default_dhcp_options_id
-  security_list_ids          = [oci_core_security_list.FoggyKitchenOKELBSecurityList.id]
+  security_list_ids          = var.lb_nsg ? null : [oci_core_security_list.FoggyKitchenOKELBSecurityList[0].id]
 }
 
 

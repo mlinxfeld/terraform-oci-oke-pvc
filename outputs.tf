@@ -14,6 +14,10 @@ $ kubectl get pvc
 
 $ kubectl describe pod nginx
 
+5.  Get services
+
+$ kubectl get services
+
 EOT
 }
 

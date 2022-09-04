@@ -69,6 +69,27 @@ variable "vpus_per_gb" {
   default = "20" # Higher Performance
 }
 
+variable "lb_shape" {
+  default = "flexible"
+}
+
+variable "flex_lb_min_shape" {
+  default = 10
+}
+
+variable "flex_lb_max_shape" {
+  default = 100
+}
+
+variable "lb_listener_port" {
+  default = 80
+}
+
+variable "lb_nsg" {
+  default = true
+}
+
+
 variable "network_cidrs" {
   type = map(string)
 
