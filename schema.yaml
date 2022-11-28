@@ -167,7 +167,7 @@ variables:
     type: oci:core:instanceshape:name
     title: "K8S Nodes Shape"
     description: "Choose a shape for your K8S nodes"
-    default: "VM.Standard.E4.Flex"
+    default: "VM.Standard.A1.Flex"
     required: false
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -178,7 +178,7 @@ variables:
     minimum: 1
     maximum: 128
     multipleOf: 1
-    default: 2
+    default: 1
     title: "K8S Nodes Flex Shape OCPUs"
     description: "Choose number of OCPUs for Flex Shape."
     visible:
@@ -203,7 +203,7 @@ variables:
     minimum: 1
     maximum: 128
     multipleOf: 1
-    default: 16
+    default: 6
     title: "K8S Nodes Flex Shape Memory (GB)"
     description: "Choose number GB for Flex Shape Memory."
     visible:
