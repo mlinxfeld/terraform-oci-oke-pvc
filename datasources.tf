@@ -58,6 +58,7 @@ data "template_file" "nginx_deployment" {
   template = "${file("${path.module}/templates/nginx.template.yaml")}"
   vars     = {
       block_volume_name = var.pvc_from_existing_block_volume ? oci_core_volume.FoggyKitchenBlockVolume[0].display_name : var.block_volume_name
+      is_arm_node_shape = local.is_arm_node_shape
   }
 }
 

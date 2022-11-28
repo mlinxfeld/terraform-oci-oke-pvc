@@ -21,10 +21,4 @@ $ kubectl get services
 EOT
 }
 
-#output "oracle_linux_images" {
-#  value = local.oracle_linux_images
-#}
 
-#output "oracle_linux_images2" {
-#  value = local.oracle_linux_service_names
-#}

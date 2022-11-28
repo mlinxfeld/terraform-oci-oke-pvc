@@ -33,6 +33,7 @@ variableGroups:
   - oke_node_shape
   - flex_shape_memory
   - flex_shape_ocpus
+  - oke_node_boot_volume_size_in_gbs
   - oke_node_os_version
   - cluster_name
   - lb_shape
@@ -220,6 +221,16 @@ variables:
           - eq:
             - oke_node_shape 
             - "VM.Optimized3.Flex"
+
+  oke_node_boot_volume_size_in_gbs:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 256
+    multipleOf: 1
+    default: 50
+    title: "What is the size of K8S node boot block volume (GB)?"
+    description: "Choose number of GB for the size of K8S node boot block volume."
 
   ssh_public_key:
     type: oci:core:ssh:publickey

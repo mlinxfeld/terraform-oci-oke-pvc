@@ -37,8 +37,8 @@ resource "oci_containerengine_node_pool" "FoggyKitchenOKENodePool" {
 
   node_source_details {
     image_id    = local.oracle_linux_images[0]
-    #data.oci_core_images.InstanceImageOCID.images[0].id
     source_type = "IMAGE"
+    boot_volume_size_in_gbs = var.oke_node_boot_volume_size_in_gbs
   }
 
   dynamic "node_shape_config" {
