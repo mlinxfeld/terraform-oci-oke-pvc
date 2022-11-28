@@ -27,3 +27,5 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: ${block_volume_name}
+      ${ is_arm_node_shape ? "nodeSelector:" : "" }
+        ${ is_arm_node_shape ? "kubernetes.io/arch: arm64" : "" }

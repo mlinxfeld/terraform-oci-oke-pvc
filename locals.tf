@@ -8,7 +8,8 @@ locals {
   ]
 
   compute_arm_shapes = [
-    "VM.Standard.A1.Flex"
+    "VM.Standard.A1.Flex",
+    "BM.Standard.A1"  
   ]
 
   is_flexible_node_shape                  = contains(local.compute_flexible_shapes, var.oke_node_shape)
@@ -33,8 +34,5 @@ locals {
   oracle_linux_images        = [
     for source in local.all_sources : source.image_id if length(regexall("Oracle-Linux-${var.oke_node_os_version}-${local.arm_node_shape}.+-OKE-${local.kubernetes_version}-[0-9]+", source.source_name)) > 0
   ]
-  #oracle_linux_service_names = [
-  #  for source in local.all_sources : source.source_name if length(regexall("Oracle-Linux-${var.oke_node_os_version}-${local.arm_node_shape}.+OKE-${local.kubernetes_version}-*", source.source_name)) > 0
-  #]
 }
 
