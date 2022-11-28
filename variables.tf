@@ -34,11 +34,11 @@ variable "oke_node_boot_volume_size_in_gbs" {
 }
 
 variable "flex_shape_memory" {
-  default = 16
+  default = 6
 }
 
 variable "flex_shape_ocpus" {
-  default = 2
+  default = 1
 }
 
 variable "cluster_name" {
